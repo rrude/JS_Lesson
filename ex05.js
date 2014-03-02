@@ -1,36 +1,61 @@
-// var StarShip = function(designation, registryNumber, crewComplement){
-//     this.designation = designation || "Unknown Designation";
-//     this.registryNumber = registryNumber || "registryNumber";
-//     this.crewComplement = crewComplement || 0;
-// }
-
-// var enterprise = new StarShip("Enterprise", "NCC-1701-D", 1014);
-// var birdofPrey = new StarShip("IKS Koraga", "K'Vort", "25")
-
-// console.log(birdofPrey);
-
-
-var Book = function(Title, Genre, Author, Read, readDate){
-    this.title = Title || "untitled";
-    this.Genre = Genre || "ungenre";
-    this.Author = Author || "anonymous";
-    this.Read = Read || "false";
+var Book = function(bookTitle, genre, author, read, readDate){
+    this.bookTitle = bookTitle || "untitled";
+    this.genre = genre || "ungenre";
+    this.author = author || "anonymous";
+    this.read = read || false;
     this.readDate = new Date(readDate) || '';
 }
 
 var BookList = function(booksRead, notRead, bookShelf) {
     this.booksRead = booksRead || 0;
-    this.notRead = notRead || "";
+    this.notRead = notRead || 0;
     this.bookShelf = bookShelf || [];
-
-    booksRead: function(){
-        
+    this.currentBookIndex = 0;
+    this.nextBookIndex = 0;
+    
+    this.getCurrentBook = function(){
+       return this.bookShelf[this.currentBookIndex];
+    }
+    this.getNextBook = function(){
+        // In Py, randInt(len(range()))
+        this.currentBookIndex = Math.floor(Math.random() * this.bookShelf.length);
+        return this.bookShelf[this.currentBookIndex];
+    }
+    this.addBook = function(book){
+        this.bookShelf.push(book); // adds item to end of array  
+    }
+    this.finishCurrentBook = function(){
+        this.booksRead += 1;
+        this.notRead -= 1;
+        this.getCurrentBook().read = true;
+        this.getCurrentBook().readDate = new Date();
+        var unreadList = []
+        for (i = 0; i < this.bookShelf.length; i++){
+            book = this.bookShelf[i];
+            if (book.read == false){
+                unreadList.push(i);
+            }
+        }
+        var n = Math.floor(Math.random() * unreadList.length);
+        this.currentBookIndex = unreadList[n];
     }
 }
 
+var BookBoss = function(BookList, Book){
+    BookList.addBook(Book);
+}
 
-var book1 = new Book("War and Peace", "Fiction", "Leo Tolstoy", "True", '3/2/14');
-var book2 = new Book("Anna Karenina", "Fiction", "Leo Tolstoy", "False");
+var book1 = new Book("War and Peace", "Fiction", "Leo Tolstoy", true, '3/2/14');
+var book2 = new Book("Anna Karenina", "Fiction", "Leo Tolstoy", false);
+var book3 = new Book("Angela's Ashes", "Memoir", "Frank McCourt", false);
+var book4 = new Book("The Road", "Fiction", "Jack Kerouac", false);
 
-console.log(book1);
-console.log(book2);
+var BookList1 = new BookList();
+
+BookList1.addBook(book1);
+BookList1.addBook(book2);
+BookList1.addBook(book3);
+BookList1.addBook(book4);
+
+BookList1.finishCurrentBook();
+console.log(BookList1.getCurrentBook());
